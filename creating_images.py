@@ -103,6 +103,3 @@ def generating_body_report(im, user_id, list_reports):
 
     # Return path to image
     return new_im
-
-if __name__ == '__main__':
-
