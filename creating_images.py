@@ -1,10 +1,47 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 
+# Main function
+def create_report(report, user_id):
+    dict_mark = {'5': 0, '4': 0, '3': 0, '2': 0, 'average': 0, 'term': 0}
+    list_pre_report = []
+    mark_pos = (917, 16)
+    for subject in report['subjects'].keys():
+        each_lesson = {'5': report['subjects'][subject]['5'], '4': report['subjects'][subject]['4'],
+                       '3': report['subjects'][subject]['3'], '2': report['subjects'][subject]['2'],
+                       'average': report['subjects'][subject]['average'], 'term': report['subjects'][subject]['term'],
+                       'subject': subject}
+        list_pre_report.append(each_lesson)
+
+    total = report['total']
+
+
+    im = generating_head_report(list_pre_report, user_id)
+    im2 = Image.open('end.png')
+    draw_text = ImageDraw.Draw(im2)
+    font = ImageFont.truetype("arialbd.ttf", 30)
+    for keys in total.keys():
+        if keys.isnumeric() or keys.isalnum():
+            if len(total[keys]) == 1:
+                mark_pos = (mark_pos[0] + 66, mark_pos[1])
+            else:
+                mark_pos = (mark_pos[0] + 62, mark_pos[1])
+            draw_text.text(mark_pos, total[keys], fill='black', font=font)
+
+    w_1, h_1 = im.size
+    w_2, h_2 = im2.size
+    new_im = Image.new('RGB', (w_1, h_1 + h_2), 'white')
+    new_im.paste(im, (0, 0))
+    new_im.paste(im2, (0, h_1))
+
+    new_im.save(f'{os.getcwd()}\{user_id}.png')
+    return f'{os.getcwd()}\{user_id}.png'
+
+
 def generating_head_report(list_reports, user_id):
     list_numeric = []
     mark_pos = (983, 350)
-    im = Image.open('BotData\Pics\head_half_year.png')
+    im = Image.open('head_half_year.png')
     draw_text = ImageDraw.Draw(im)
     font = ImageFont.truetype("arialbd.ttf", 30)
     subject = list_reports[1]['subject']
@@ -30,7 +67,7 @@ def generating_body_report(im, user_id, list_reports):
 
         # Base Data
         mark_pos = (917, 38)
-        im2 = Image.open('BotData\Pics\pattern.png')
+        im2 = Image.open('pattern.png')
         draw_text = ImageDraw.Draw(im2)
         font = ImageFont.truetype("arialbd.ttf", 30)
         subject = list_reports[i]['subject']
@@ -62,43 +99,10 @@ def generating_body_report(im, user_id, list_reports):
         im = new_im
 
     # Saving final image as .png
-    new_im.save(f'{os.getcwd()}\BotData\Pics\{user_id}.png')
+    new_im.save(f'{os.getcwd()}\{user_id}.png')
 
     # Return path to image
     return new_im
 
+if __name__ == '__main__':
 
-def create_report(report, user_id):
-    dict_mark = {'5': 0, '4': 0, '3': 0, '2': 0, 'average': 0, 'term': 0}
-    list_pre_report = []
-    mark_pos = (917, 16)
-    for subject in report['subjects'].keys():
-        each_lesson = {'5': report['subjects'][subject]['5'], '4': report['subjects'][subject]['4'],
-                       '3': report['subjects'][subject]['3'], '2': report['subjects'][subject]['2'],
-                       'average': report['subjects'][subject]['average'], 'term': report['subjects'][subject]['term'],
-                       'subject': subject}
-        list_pre_report.append(each_lesson)
-
-    total = report['total']
-
-
-    im = generating_head_report(list_pre_report, user_id)
-    im2 = Image.open('BotData\Pics\end.png')
-    draw_text = ImageDraw.Draw(im2)
-    font = ImageFont.truetype("arialbd.ttf", 30)
-    for keys in total.keys():
-        if keys.isnumeric() or keys.isalnum():
-            if len(total[keys]) == 1:
-                mark_pos = (mark_pos[0] + 66, mark_pos[1])
-            else:
-                mark_pos = (mark_pos[0] + 62, mark_pos[1])
-            draw_text.text(mark_pos, total[keys], fill='black', font=font)
-
-    w_1, h_1 = im.size
-    w_2, h_2 = im2.size
-    new_im = Image.new('RGB', (w_1, h_1 + h_2), 'white')
-    new_im.paste(im, (0, 0))
-    new_im.paste(im2, (0, h_1))
-
-    new_im.save(f'{os.getcwd()}\BotData\Pics\{user_id}.png')
-    return f'{os.getcwd()}\BotData\Pics\{user_id}.png'
