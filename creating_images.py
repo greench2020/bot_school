@@ -83,7 +83,7 @@ def create_report(report, user_id):
 
 
     im = generating_head_report(list_pre_report, user_id)
-    im2 = Image.open('BotData\Pics\end_1.png')
+    im2 = Image.open('BotData\Pics\end.png')
     draw_text = ImageDraw.Draw(im2)
     font = ImageFont.truetype("arialbd.ttf", 30)
     for keys in total.keys():
